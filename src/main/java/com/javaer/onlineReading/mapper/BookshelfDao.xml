@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.BookshelfDao" >
+
+    <insert id="insert">
+        INSERT t_bookshelf (book_id,user_id,createTime)
+        VALUES (#{book.id},#{user.id},sysdate())
+    </insert>
+
+    <update id="update">
+        update t_bookshelf
+        <trim prefix="set" suffixOverrides=",">
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <select id="getListByUser" resultType="com.javaer.onlineReading.entity.Bookshelf"  >
+        select
+          bookshelf.id,
+
+          book.id as "book.id",
+          book.name as "book.name",
+          book.simpleName as "book.simpleName",
+          book.description as "book.description",
+          book.bookType_id as "book.bookType.id",
+          bookType.name as "book.bookType.name",
+          book.registTime as "book.registTime",
+          book.updateTime as "book.updateTime",
+          book.checkTime as "book.checkTime",
+          book.checkFlag as "book.checkFlag",
+          book.checkFail as "book.checkFail",
+          book.headImg as "book.headImg",
+          book.recommend as "book.recommend",
+          book.readCounts as "book.readCounts",
+          author.id as "book.author.id",
+          author.user_name as "book.author.userName"
+
+        from t_bookshelf bookshelf
+        LEFT JOIN t_book book on book.id = bookshelf.book_id
+        LEFT join t_user author on author.id = book.author_id
+        LEFT JOIN t_bookType bookType on bookType.id = book.bookType_id
+        where book.flag = 1 and bookshelf.flag = 1
+        and bookshelf.user_id = #{id}
+        ORDER BY bookshelf.id DESC
+    </select>
+
+</mapper>

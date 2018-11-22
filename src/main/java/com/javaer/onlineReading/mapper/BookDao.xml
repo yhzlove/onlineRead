@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.BookDao" >
+
+    <insert id="insert">
+        INSERT t_book (name,simpleName,author_id,bookType_id,description,headImg,registTime)
+        VALUES (#{name},#{simpleName},#{author.id},#{bookType.id},#{description},#{headImg},sysdate())
+    </insert>
+
+    <update id="update">
+        update t_book
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="simpleName != null">simpleName = #{simpleName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="updateTime != null">updateTime = #{updateTime},</if>
+            <if test="checkTime != null">checkTime = #{checkTime},</if>
+            <if test="checkFlag != null">checkFlag = #{checkFlag},</if>
+            <if test="checkFail != null">checkFail = #{checkFail},</if>
+            <if test="headImg != null">headImg = #{headImg},</if>
+            <if test="recommend != null">recommend = #{recommend},</if>
+            <if test="flag != null">flag = #{flag},</if>
+            <if test="bookType != null and bookType.id != null">bookType_id = #{bookType.id},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <select id="getById" resultType="com.javaer.onlineReading.entity.Book">
+        select
+          book.id,
+          book.name,
+          book.simpleName,
+          book.description,
+          book.bookType_id as "bookType.id",
+          bookType.name as "bookType.name",
+          book.registTime,
+          book.updateTime,
+          book.checkTime,
+          book.checkFlag,
+          book.checkFail,
+          book.headImg,
+          book.recommend,
+          book.readCounts,
+          book.author_id as "author.id",
+          tuser.user_name as "author.userName"
+        from t_book book
+        LEFT join t_user tuser on tuser.id = book.author_id
+        LEFT JOIN t_bookType bookType on bookType.id = bookType_id
+        where book.id = #{id}
+
+    </select>
+
+    <select id="getList" resultType="com.javaer.onlineReading.entity.Book"  >
+        select
+          book.id,
+          book.name,
+          book.simpleName,
+          book.description,
+          book.bookType_id as "bookType.id",
+          bookType.name as "bookType.name",
+          book.registTime,
+          book.updateTime,
+          book.checkTime,
+          book.checkFlag,
+          book.checkFail,
+          book.headImg,
+          book.recommend,
+          book.readCounts,
+          author_id as "author.id",
+          tuser.user_name as "author.userName"
+        from t_book book
+        LEFT join t_user tuser on tuser.id = book.author_id
+        LEFT JOIN t_bookType bookType on bookType.id = bookType_id
+        where book.flag = 1
+        <if test="name != null and  name != null">
+            AND book.name like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="author != null and  author.id != null">
+          AND author_id = #{author.id}
+        </if>
+        <if test="author != null and  author.userName != null">
+            AND tuser.user_Name like concat(concat('%',#{author.userName}),'%')
+        </if>
+        <if test="bookType != null and  bookType.id != null">
+            AND book.bookType_id = #{bookType.id}
+        </if>
+        <if test="bookType != null and  bookType.name != null">
+            AND bookType.name like concat(concat('%',#{bookType.name}),'%')
+        </if>
+        ORDER BY  recommend DESC ,readCounts ,id DESC
+    </select>
+
+    <update id="increaseReadCounts">
+        update t_book
+        set
+        readCounts = readCounts+1
+        where ID = #{id}
+    </update>
+
+</mapper>

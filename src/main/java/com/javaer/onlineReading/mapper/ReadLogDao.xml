@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.ReadLogDao" >
+
+
+    
+    <insert id="insert">
+        INSERT t_record
+        (user_id,book_id,chapter_id,creatTime)
+        VALUES
+        (#{user.id}, #{book.id},#{chapter.id},sysdate())
+    </insert>
+
+    <select id="getList" resultType="com.javaer.onlineReading.entity.ReadLog"  >
+        select
+          record.id,
+          record.creatTime as "readDate",
+          record.user_id,
+          record.book_id,
+          record.chapter_id,
+
+          book.id as "book.id",
+          book.name as "book.name",
+          book.simpleName as "book.simpleName",
+          book.description as "book.description",
+          book.bookType_id as "book.bookType.id",
+          bookType.name as "book.bookType.name",
+          book.registTime as "book.registTime",
+          book.updateTime as "book.updateTime",
+          book.checkTime as "book.checkTime",
+          book.checkFlag as "book.checkFlag",
+          book.checkFail as "book.checkFail",
+          book.headImg as "book.headImg",
+          book.recommend as "book.recommend",
+          book.readCounts as "book.readCounts",
+          author.id as "book.author.id",
+          author.user_name as "book.author.userName",
+
+
+          chapter.id as "chapter.id",
+          chapter.title as "chapter.title",
+          chapter.orderNo as "chapter.orderNo",
+          chapter.content as "chapter.content",
+          chapter.registTime as "chapter.registTime",
+          chapter.updateTime as "chapter.updateTime",
+          chapter.readCounts as "chapter.readCounts"
+
+        from t_record record
+        LEFT JOIN t_book book on book.id = record.book_id
+        LEFT join t_user author on author.id = book.author_id
+        LEFT JOIN t_bookType bookType on bookType.id = book.bookType_id
+
+        LEFT JOIN t_chapter chapter on chapter.id = record.chapter_id
+
+        where user_id = #{user.id}
+        order by record.creatTime desc
+    </select>
+
+
+</mapper>

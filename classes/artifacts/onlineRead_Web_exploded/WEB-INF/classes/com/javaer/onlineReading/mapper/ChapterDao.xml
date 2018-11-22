@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.ChapterDao" >
+
+    <resultMap id="BaseResultMap" type="com.javaer.onlineReading.entity.Chapter">
+        <result column="content" property="content" typeHandler="com.javaer.onlineReading.util.ConvertBlobTypeHandler" />
+    </resultMap>
+
+    <insert id="insert">
+        INSERT t_chapter (book_id,title,orderNo,content,registTime)
+        VALUES (#{book.id},#{title},#{orderNo},#{content},sysdate())
+    </insert>
+
+    <update id="update">
+        update t_chapter
+        <trim prefix="set" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="orderNo != null">orderNo = #{orderNo},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="updateTime != null">updateTime = #{updateTime},</if>
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <update id="increaseReadCounts">
+        update t_chapter
+        set
+        readCounts = readCounts+1
+        where ID = #{id}
+    </update>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+          chapter.id,
+          chapter.title,
+          chapter.orderNo,
+          chapter.content,
+          chapter.registTime,
+          chapter.updateTime,
+          chapter.readCounts,
+          book.id AS  "book.id",
+          book.NAME as "book.NAME"
+        from t_chapter chapter
+        LEFT join t_book book on book.id = chapter.book_id
+        where chapter.id = #{id}
+
+    </select>
+
+    <select id="getList" resultMap="BaseResultMap"  >
+        select
+          chapter.id,
+          chapter.title,
+          chapter.orderNo,
+          chapter.content,
+          chapter.registTime,
+          chapter.updateTime,
+          chapter.readCounts
+         from t_chapter chapter
+        LEFT join t_book book on book.id = chapter.book_id
+        where chapter.flag = 1
+        ORDER BY chapter.orderNo
+
+    </select>
+
+
+    <select id="getListByBook" resultMap="BaseResultMap"  >
+        select
+            chapter.id,
+            chapter.title,
+            chapter.orderNo,
+            chapter.content,
+            chapter.registTime,
+            chapter.updateTime,
+            chapter.readCounts,
+            book.id AS  "book.id",
+            book.NAME as "book.NAME"
+        from t_chapter chapter
+        LEFT join t_book book on book.id = chapter.book_id
+        where chapter.flag = 1
+          and chapter.book_id = #{bookId}
+        ORDER BY chapter.orderNo
+
+    </select>
+
+</mapper>

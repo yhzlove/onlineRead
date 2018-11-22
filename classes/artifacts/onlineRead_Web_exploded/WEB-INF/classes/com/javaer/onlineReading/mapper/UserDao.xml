@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.UserDao" >
+
+    <insert id="insert" parameterType="com.javaer.onlineReading.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT t_user (login_Name,user_Name,password,registTime,role,headImg)
+        VALUES (#{loginName},#{userName},#{password},sysdate(),#{role},#{headImg})
+    </insert>
+
+    <update id="update">
+        update t_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="loginName != null">login_Name = #{loginName},</if>
+            <if test="userName != null">user_Name = #{userName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="headImg != null">headImg = #{headImg},</if>
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <select id="getById" resultType="com.javaer.onlineReading.entity.User">
+        select
+          id,
+          login_Name as loginName,
+          user_Name as userName,
+          password as password,
+          registTime,
+          role,
+          headImg
+        from t_user
+        where flag = 1 and id = #{id}
+
+    </select>
+
+    <select id="getUserByLoginName" resultType="com.javaer.onlineReading.entity.User"  >
+        select
+          id,
+          login_Name as loginName,
+          user_Name as userName,
+          password as password,
+          role,
+          headImg
+        from t_user
+        where flag = 1
+        <if test="loginName != null">
+            and login_Name = #{loginName}
+        </if>
+
+    </select>
+
+    <select id="getList" resultType="com.javaer.onlineReading.entity.User"  >
+        select
+          id,
+          login_Name as loginName,
+          user_Name as userName,
+          registTime,
+          role,
+          headImg
+        from t_user
+        where flag = 1
+    </select>
+
+</mapper>

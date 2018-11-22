@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.CensorDao" >
+
+
+    
+    <insert id="insert">
+        INSERT t_censor
+        (word,registTime)
+        VALUES
+        (#{word}, sysdate())
+    </insert>
+
+    <update id="update">
+        update t_censor
+        <trim prefix="set" suffixOverrides=",">
+            <if test="word != null">name = #{word},</if>
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+
+
+    <select id="getById" resultType="com.javaer.onlineReading.entity.Censor">
+        select
+          id,
+          word,
+          registTime
+        from t_censor
+        where id = #{id}
+
+    </select>
+
+    <select id="getList" resultType="com.javaer.onlineReading.entity.Censor"  >
+        select
+          id,
+          word,
+          registTime
+        from t_censor
+        where flag = 1
+    </select>
+
+
+</mapper>

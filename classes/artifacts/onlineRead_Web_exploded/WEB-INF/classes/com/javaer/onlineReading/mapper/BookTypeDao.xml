@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javaer.onlineReading.dao.BookTypeDao" >
+
+
+    
+    <insert id="insert">
+        INSERT t_bookType
+        (name,headImg,orderNo,registTime)
+        VALUES
+        (#{name},#{headImg},#{orderNo},sysdate())
+    </insert>
+
+    <update id="update">
+        update t_bookType
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="bookCounts != null">bookCounts = #{bookCounts},</if>
+            <if test="headImg != null">headImg = #{headImg},</if>
+            <if test="orderNo != null">orderNo = #{orderNo},</if>
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+
+
+    <select id="getById" resultType="com.javaer.onlineReading.entity.BookType">
+        select
+          id,
+          name,
+          bookCounts,
+          registTime,
+          headImg,
+          orderNo
+        from t_bookType
+        where id = #{id}
+
+    </select>
+
+    <select id="getList" resultType="com.javaer.onlineReading.entity.BookType"  >
+        select
+          id,
+          name,
+          bookCounts,
+          registTime,
+          headImg,
+          orderNo
+        from t_bookType
+        where flag = 1 order by orderNo
+    </select>
+
+    <update id="increaseCounts">
+        update t_bookType
+        set
+          bookCounts = bookCounts+1
+        where ID = #{id}
+    </update>
+
+
+    <update id="reduceCounts">
+        update t_bookType
+        set
+          bookCounts = bookCounts-1
+        where ID = #{id}
+    </update>
+</mapper>
